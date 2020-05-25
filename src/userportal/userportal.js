@@ -13,10 +13,18 @@ class Userportal extends Component {
 		response.then(function(res){
 			return res.json();
 		}).then(function(data){
-			that.users = data;
-			that.setState({users: that.users});
+			that.setUsers(data);
 			that.setState({usersFetched: true});
 		});
+	}
+	
+	setUsers(users){
+		var userlist = users.map(function(user){
+			user['namesize'] = user.firstName.length + user.lastName.length;
+			return user;
+		});
+		this.users = userlist;
+		this.setState({users: userlist});
 	}
 	
 	filterUsers(filters){

@@ -9,16 +9,19 @@ class Filterpane extends Component {
 		
 		this.nameChanged = this.nameChanged.bind(this);
 		this.handleAgeFilterChange = this.handleAgeFilterChange.bind(this);
+		this.handleNameLengthFilterChange = this.handleNameLengthFilterChange.bind(this);
 		this.filterBtnClicked = this.filterBtnClicked.bind(this);
 		
 		this.state = {
 			name : '',
 			nameLengthStart : 0,
-			nameLengthEnd : 30,
-			ageStart : 30,
-			startInclusive: true,
-			ageEnd : 70,
-			endInclusive: false,
+			nameLengthStartInclusive: false,
+			nameLengthEnd : 100,
+			nameLengthEndInclusive: true,
+			ageStart : 0,
+			startInclusive: false,
+			ageEnd : 100,
+			endInclusive: true,
 		}
 		
 	}
@@ -31,6 +34,13 @@ class Filterpane extends Component {
 		this.setState({ageStart: ageStart});
 		this.setState({startInclusive: startInclusive});
 		this.setState({ageEnd: ageEnd});
+		this.setState({nameLengthEndInclusive: endInclusive});
+	}
+	
+	handleNameLengthFilterChange(nameLengthStart, startInclusive, nameLengthEnd, endInclusive){
+		this.setState({nameLengthStart: nameLengthStart});
+		this.setState({nameLengthStartInclusive: startInclusive});
+		this.setState({nameLengthEnd: nameLengthEnd});
 		this.setState({endInclusive: endInclusive});
 	}
 	
@@ -38,6 +48,7 @@ class Filterpane extends Component {
 		this.filters = [];
 		this.getNameFilter();
 		this.geAgeFilter();
+		this.getNameLengthFilter();
 		this.props.onFilter(this.filters);
 	}
 
@@ -66,6 +77,21 @@ class Filterpane extends Component {
 		});
 	}
 	
+	getNameLengthFilter(){
+		this.filters.push({
+			field: 'namesize',
+			type: 'range',
+			start: {
+				point: this.state.nameLengthStart,
+				inclusive: this.state.nameLengthStartInclusive
+			},
+			end: {
+				point: this.state.nameLengthEnd,
+				inclusive: this.state.nameLengthEndInclusive
+			}
+		});
+	}
+	
 	render(){
 		
 		return(
@@ -73,11 +99,11 @@ class Filterpane extends Component {
 				<div className='filter-criteria'>
 					<div>Name</div>
 					<input className='input-el' type='text' onChange={this.nameChanged}/>
-					<Rangepicker min='0' max='100' start='30' end='70'/>
+					<Rangepicker min='0' max='100' start='0' end='100' endInclusive={true} onChange={this.handleNameLengthFilterChange}/>
 				</div>
 				<div className='filter-criteria'>
 					<div>Age</div>
-					<Rangepicker min='0' max='100' start='30' end='70' startInclusive={true}  onChange={this.handleAgeFilterChange}/>
+					<Rangepicker min='0' max='100' start='0' end='100' endInclusive={true}  onChange={this.handleAgeFilterChange}/>
 				</div>
 				<div style={{'border-top':'solid 1px lightgray', 'margin-top':'20px', padding:'10px'}}>
 					<button className='btn' style={{float:'right'}} onClick={this.filterBtnClicked}>Filter</button>
